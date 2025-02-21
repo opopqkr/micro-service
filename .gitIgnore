@@ -160,7 +160,3 @@ build/
 
 ### .keep ###
 !src/main/resources/.keep
-
-### sub project ###
-/user-service/
-/discovery-service/

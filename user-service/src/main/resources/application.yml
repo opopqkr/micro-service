@@ -13,6 +13,7 @@ spring:
 # 유레카 클라이언트 등록
 eureka:
   instance:
+    # 랜덤포트로 동일 어플리케이션을 여러 개 실행하여도, 유레카 서버에서 인스턴스는 한 개만 보이기 때문에 instance id 부여
     instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
   client:
     register-with-eureka: true

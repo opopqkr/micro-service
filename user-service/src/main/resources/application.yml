@@ -1,5 +1,6 @@
 # Server 실행 명령어 (Port option)
-# java : java -jar user-service-0.0.1-SNAPSHOT.jar --server.port=9003
+# java 1 : java -jar user-service-0.0.1-SNAPSHOT.jar --server.port=9003
+# java 2 : java -jar '-Dserver.port=8092' second-service-0.0.1-SNAPSHOT.jar
 # maven : mvn spring-boot:run -Dspring-boot.run.jvmArguments='-Dserver.port=9004'
 
 # 0인 경우 random port 설정

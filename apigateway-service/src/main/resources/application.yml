@@ -2,9 +2,12 @@ server:
   port: 8000
 
 eureka:
+  instance:
+    hostname: localhost # temp
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
 
@@ -13,18 +16,33 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
       routes:
         - id: first-service
-          uri: http://localhost:8081/
+          # uri: http://localhost:8081/
+          uri: lb://MY-FIRST-SERVICE # Obtain URI information through Eureka server
           predicates:
-            - Path=/first-service/** # ??? ?? ?? uri? ??? ??, http://localhost:8081/first-service/**
+            - Path=/first-service/** # default request to first service ex) http://localhost:8081/first-service/**
           filters:
-            - AddRequestHeader=first-request, first-request-header2
-            - AddResponseHeader=first-response, first-response-header2
+            # - AddRequestHeader=first-request, first-request-header2
+            # - AddResponseHeader=first-response, first-response-header2
+            - CustomFilter
         - id: second-service
-          uri: http://localhost:8082/
+          # uri: http://localhost:8082/
+          uri: lb://MY-SECOND-SERVICE # Obtain URI information through Eureka server
           predicates:
-            - Path=/second-service/** # ??? ?? ?? uri? ??? ??, http://localhost:8082/second-service/**
+            - Path=/second-service/** # default request to second service ex) http://localhost:8082/second-service/**
           filters:
-            - AddRequestHeader=second-request, second-request-header2
-            - AddResponseHeader=second-response, second-response-header2
+            # - AddRequestHeader=second-request, second-request-header2
+            # - AddResponseHeader=second-response, second-response-header2
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there. This is Logging Filter.
+                preLogger: true
+                postLogger: true

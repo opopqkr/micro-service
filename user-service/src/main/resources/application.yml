@@ -10,14 +10,28 @@ server:
 spring:
   application:
     name: user-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: /h2-console
 
 # 유레카 클라이언트 등록
 eureka:
   instance:
+    hostname: localhost # temp
     # 랜덤포트로 동일 어플리케이션을 여러 개 실행하여도, 유레카 서버에서 인스턴스는 한 개만 보이기 때문에 instance id 부여
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+greeting:
+  message: Welcome th the Simple E-commerce.

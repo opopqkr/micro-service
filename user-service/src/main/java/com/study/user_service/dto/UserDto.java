@@ -26,9 +26,9 @@ public class UserDto {
 
     private String encryptedPassword;
 
-    public void create() {
+    public void create(String encryptedPassword) {
         this.userId = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
-        this.encryptedPassword = "encrypted_password"; // temp
+        this.encryptedPassword = encryptedPassword; // temp
     }
 }

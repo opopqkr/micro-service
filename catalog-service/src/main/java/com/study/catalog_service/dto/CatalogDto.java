@@ -1,15 +1,15 @@
-package com.study.user_service.vo;
+package com.study.catalog_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseOrder {
+public class CatalogDto implements Serializable {
 
     private String productId;
 
@@ -19,8 +19,8 @@ public class ResponseOrder {
 
     private Integer totalPrice;
 
-    private LocalDateTime cratedAt;
-
     private String orderId;
+
+    private String userId;
 
 }

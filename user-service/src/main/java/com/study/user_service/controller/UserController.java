@@ -7,14 +7,16 @@ import com.study.user_service.vo.RequestUser;
 import com.study.user_service.vo.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user-service")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -24,9 +26,12 @@ public class UserController {
 
     private final UserService userService;
 
+    private final ModelMapper mapper;
+
     @GetMapping("/health_check")
     public String status() {
-        return "It's Working in User Service";
+        return String.format("It's Working in User Service on PORT %s",
+                env.getProperty("local.server.port"));
     }
 
     @GetMapping("/welcome")
@@ -37,13 +42,31 @@ public class UserController {
 
     @PostMapping("/user")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
         UserDto userDto = mapper.map(user, UserDto.class);
+        UserDto createdUserDto = userService.createUser(userDto);
 
-        ResponseUser responseUser = mapper.map(userService.createUser(userDto), ResponseUser.class);
+        ResponseUser responseUser = mapper.map(createdUserDto, ResponseUser.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
+        UserDto userDto = userService.getUserById(userId);
+
+        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
+        return ResponseEntity.ok(responseUser);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserDto> userList = userService.getUserByAll();
+
+        List<ResponseUser> result = new ArrayList<>();
+        userList.forEach(user -> {
+            result.add(mapper.map(user, ResponseUser.class));
+        });
+
+        return ResponseEntity.ok(result);
     }
 
 }

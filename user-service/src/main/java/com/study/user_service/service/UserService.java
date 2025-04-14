@@ -1,8 +1,9 @@
 package com.study.user_service.service;
 
 import com.study.user_service.dto.UserDto;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     UserDto createUser(UserDto userDto);
 

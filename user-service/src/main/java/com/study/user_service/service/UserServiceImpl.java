@@ -1,11 +1,14 @@
 package com.study.user_service.service;
 
+import com.google.common.collect.Lists;
 import com.study.user_service.dto.UserDto;
 import com.study.user_service.entity.UserEntity;
 import com.study.user_service.repository.UserRepository;
 import com.study.user_service.vo.ResponseOrder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,4 +61,13 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(),
+                true, true, true, true,
+                Lists.newArrayList());
+    }
 }

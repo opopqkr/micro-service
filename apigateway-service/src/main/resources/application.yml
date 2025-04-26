@@ -27,7 +27,7 @@ spring:
         #   uri: lb://USER-SERVICE
         #   predicates:
         #     - Path=/user-service/** # default request to user service ex) http://localhost:8081/user-service/**
-        - id: user-service
+        - id: user-service # 로그인을 위한 설정
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/login
@@ -35,7 +35,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-        - id: user-service
+        - id: user-service # 회원가입을 위한 설정
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/user
@@ -51,6 +51,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter # 회원가입, 로그인을 제외한 경우에는 모두 인증 체크
         - id: catalog-service
           uri: lb://CATALOG-SERVICE
           predicates:
@@ -82,3 +83,6 @@ spring:
                 baseMessage: Hi, there. This is Logging Filter.
                 preLogger: true
                 postLogger: true
+
+token:
+  secret: secret_token

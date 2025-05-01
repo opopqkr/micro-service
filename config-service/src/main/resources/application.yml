@@ -7,9 +7,11 @@ spring:
   cloud:
     config:
       server:
+        native:
+            search-locations: file://${user.home}/micro-service-native-file
         git:
-          uri: file://D:/workspace/micro-service-config
-#          uri: https://github.com/opopqkr/micro-service.git
+          uri: https://github.com/opopqkr/micro-service-config.git
 #          username:
 #          password:
+#          uri: file://D:/workspace/micro-service-config
           default-label: main # If not set, the default is 'master branch'

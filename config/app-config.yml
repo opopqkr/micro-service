@@ -1,6 +1,0 @@
-token:
-  expiration_time: 86400000
-  secret: default_token
-
-gateway:
-  ip: 192.168.219.102

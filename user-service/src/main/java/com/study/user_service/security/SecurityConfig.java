@@ -22,9 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception { // 권한 작업
         http.csrf().disable();
-        // http.authorizeRequests().antMatchers("/user/**").permitAll();
+        http.authorizeRequests().antMatchers("/actuator/**").permitAll();
         http.authorizeRequests().antMatchers("/**")
-                .hasIpAddress("127.0.0.1")
+                .access("hasIpAddress('127.0.0.1') or hasIpAddress('192.168.219.102')")
                 .and()
                 .addFilter(getAuthenticationFilter());
 

@@ -1,0 +1,12 @@
+server:
+  port: 8888 # default
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: file://D:/workspace/micro-service/config
+          default-label: main # If not set, the default is 'master branch'

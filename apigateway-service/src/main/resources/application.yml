@@ -23,10 +23,14 @@ spring:
             preLogger: true
             postLogger: true
       routes:
-        # - id: user-service
-        #   uri: lb://USER-SERVICE
-        #   predicates:
-        #     - Path=/user-service/** # default request to user service ex) http://localhost:8081/user-service/**
+        - id: user-service # actuator 설정
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
         - id: user-service # 로그인을 위한 설정
           uri: lb://USER-SERVICE
           predicates:
@@ -84,5 +88,11 @@ spring:
                 preLogger: true
                 postLogger: true
 
-token:
-  secret: secret_token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
+
+#token:
+#  secret: secret_token

@@ -40,6 +40,12 @@ logging:
   level:
     com.study.user_service: DEBUG
 
-token:
-  expiration_time: 86400000
-  secret: secret_token
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans
+
+#token:
+#  expiration_time: 86400000
+#  secret: secret_token

@@ -1,7 +1,6 @@
 package com.study.apigateway_service.filter;
 
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -16,7 +15,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
@@ -45,7 +43,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             String authorizationHeader = Objects.requireNonNull(request.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
             String jwt = authorizationHeader.replace("Bearer", "");
 
-            if (!isJWtValid(jwt)) {
+            if (!isJwtValid(jwt)) {
                 return onError(exchange, "JWT is not valid.");
             }
 
@@ -62,7 +60,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return response.setComplete();
     }
 
-    private boolean isJWtValid(String jwt) {
+    private boolean isJwtValid(String jwt) {
         boolean isValid = true;
 
         String subject = null;

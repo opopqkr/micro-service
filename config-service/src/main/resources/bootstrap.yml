@@ -1,0 +1,3 @@
+# encrypt.key 를 설정하면 대칭키에 사용되는 키로 설정 됨.
+encrypt:
+  key: abcdefghijklmnopqrstuvwxyz0123456789

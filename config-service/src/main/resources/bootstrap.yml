@@ -1,3 +1,6 @@
-# encrypt.key 를 설정하면 대칭키에 사용되는 키로 설정 됨.
 encrypt:
-  key: abcdefghijklmnopqrstuvwxyz0123456789
+  # key: abcdefghijklmnopqrstuvwxyz0123456789 # encrypt.key 를 설정하면 대칭키에 사용되는 키로 설정 됨.
+  key-store: # encrypt.key-store 를 설정하면 비대칭키에 사용되는 키로 설정 됨, spring cloud config 에서는 개인키만 사용
+    location: file:///D:/workspace/key-store/apiEncryptionKey.jks
+    password: 1q2w3e4r!
+    alias: apiEncryptionKey

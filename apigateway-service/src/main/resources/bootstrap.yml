@@ -2,6 +2,6 @@ spring:
   cloud:
     config:
       uri: http://127.0.0.1:8888
-      name: config-service # config-service 로 지정할 경우, config-service의 application.yml로 정보를 가져옴
+      name: ecommerce # config-service 로 지정할 경우, config-service의 application.yml로 정보를 가져옴
 #  profiles:
 #    active: prod

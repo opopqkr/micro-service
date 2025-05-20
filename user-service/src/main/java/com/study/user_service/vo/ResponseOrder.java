@@ -19,7 +19,7 @@ public class ResponseOrder {
 
     private Integer totalPrice;
 
-    private LocalDateTime cratedAt;
+    private LocalDateTime createdAt;
 
     private String orderId;
 

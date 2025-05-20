@@ -43,21 +43,13 @@ public class UserController {
         return greeting.getMessage();
     }
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
         UserDto userDto = mapper.map(user, UserDto.class);
         UserDto createdUserDto = userService.createUser(userDto);
 
         ResponseUser responseUser = mapper.map(createdUserDto, ResponseUser.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
-        UserDto userDto = userService.getUserById(userId);
-
-        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
-        return ResponseEntity.ok(responseUser);
     }
 
     @GetMapping("/users")
@@ -70,6 +62,14 @@ public class UserController {
         });
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        ResponseUser responseUser = mapper.map(userDto, ResponseUser.class);
+        return ResponseEntity.ok(responseUser);
     }
 
 }

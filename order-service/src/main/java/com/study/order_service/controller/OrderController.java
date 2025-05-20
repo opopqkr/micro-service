@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order-service")
+@RequestMapping("/")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -32,8 +32,8 @@ public class OrderController {
                 env.getProperty("local.server.port"));
     }
 
-    // http://127.0.0.1:0/order-service/{userId}/order
-    @PostMapping("/{userId}/order")
+    // http://127.0.0.1:0/order-service/{userId}/orders
+    @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId, @RequestBody RequestOrder requestOrder) {
         OrderDto orderDto = mapper.map(requestOrder, OrderDto.class);
 

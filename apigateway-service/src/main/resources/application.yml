@@ -47,7 +47,7 @@ spring:
         - id: user-service # 회원가입을 위한 설정
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/user
+            - Path=/user-service/users
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
@@ -69,6 +69,9 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order-service/** # default request to user service ex) http://localhost:8081/user-service/**
+          filters:
+            - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
         - id: first-service
           # uri: http://localhost:8081/
           uri: lb://MY-FIRST-SERVICE # Obtain URI information through Eureka server

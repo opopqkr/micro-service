@@ -7,7 +7,7 @@ public interface UserService extends UserDetailsService {
 
     UserDto createUser(UserDto userDto);
 
-    UserDto getUserById(String userId);
+    UserDto getUserByUserId(String userId);
 
     Iterable<UserDto> getUserByAll();
 

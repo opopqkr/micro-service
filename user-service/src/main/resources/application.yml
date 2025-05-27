@@ -15,12 +15,12 @@ spring:
     port: 5672
     username: admin
     password: admin1!
-#  data source config -> config service 설정으로 이동
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password: 1234
+  #  data source config -> config service 설정으로 이동
+  #  datasource:
+  #    driver-class-name: org.h2.Driver
+  #    url: jdbc:h2:mem:testdb
+  #    username: sa
+  #    password: 1234
   h2:
     console:
       enabled: true
@@ -45,7 +45,7 @@ greeting:
 
 logging:
   level:
-    com.study.user_service: DEBUG
+    com.study.user_service.client: DEBUG
 
 management:
   endpoints:

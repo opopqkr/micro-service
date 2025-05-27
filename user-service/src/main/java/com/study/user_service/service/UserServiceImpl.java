@@ -1,17 +1,16 @@
 package com.study.user_service.service;
 
 import com.google.common.collect.Lists;
+import com.study.user_service.client.OrderServiceClient;
 import com.study.user_service.dto.UserDto;
 import com.study.user_service.entity.UserEntity;
 import com.study.user_service.repository.UserRepository;
 import com.study.user_service.vo.ResponseOrder;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +24,7 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -33,11 +33,13 @@ public class UserServiceImpl implements UserService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final Environment environment;
+
     private final ModelMapper mapper;
 
     private final RestTemplate restTemplate;
 
-    private final Environment environment;
+    private final OrderServiceClient orderServiceClient;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -56,13 +58,27 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = mapper.map(userEntity, UserDto.class);
 
         /* Using as restTemplate */
-        String orderUrl = String.format(environment.getProperty("order-service.url"), userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-                new ParameterizedTypeReference<>() {
-                });
+        // String orderUrl = String.format(environment.getProperty("order-service.url"), userId);
+        // ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
+        //         new ParameterizedTypeReference<>() {
+        //         });
+        // List<ResponseOrder> orderList = orderListResponse.getBody();
 
-        List<ResponseOrder> orders = orderListResponse.getBody();
-        userDto.setOrders(orders);
+        /* Using a feign client */
+        /* 1. FeignException Handling with try-catch */
+        // List<ResponseOrder> orderList = null;
+        // try {
+        //     /* HttpStatus 404 Not found 에러가 발생하더라도,
+        //      * FeignException throw 하기 때문에 해당 메소드를 호출하는 client 에게는 500 에러 전달.
+        //      * FeignException extends RuntimeException */
+        //     orderList = orderServiceClient.getOrders(userId);
+        // } catch (FeignException ex) {
+        //     log.error(ex.getMessage());
+        // }
+
+        /* 2. FeignException Handling using FeignErrorDecoder, which overrides openfeign's ErrorDecoder. */
+        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        userDto.setOrders(orderList);
 
         return userDto;
     }

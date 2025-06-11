@@ -42,6 +42,8 @@
 - 다양한 3rd party library : java, c/c++, node.js, python, .net 등
   - https://cwiki.apache.org/confluence/display/KAFKA/Clients
 
+---
+
 > #### Kafka 기본 실행 명령어
 > **1. Zookeeper & Kafka 서버 구동**
 > - $KAFKA_HOME\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties

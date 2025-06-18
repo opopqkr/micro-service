@@ -42,8 +42,6 @@
 - 다양한 3rd party library : java, c/c++, node.js, python, .net 등
   - https://cwiki.apache.org/confluence/display/KAFKA/Clients
 
----
-
 > #### Kafka 기본 실행 명령어
 > **1. Zookeeper & Kafka 서버 구동**
 > - $KAFKA_HOME\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
@@ -72,3 +70,15 @@
 > - Consumer 실행 (메시지 구독)
 >   - $KAFKA_HOME\bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test-events --from-beginning
 >     - --from-beginning option : message를 처음부터 읽어 들이는 옵션
+
+
+#### Eco-system 2. Kafka Connect
+
+- Kafka Connect를 통해 Data Import/Export 가능
+- 코드 없이 Configuration file만으로 데이터 이동 가능
+- Standalone mode, Distribution mode 지원
+  - RESTful API 지원
+  - Stream 또는 Batch 형태로 데이터 전송 가능
+  - 커스텀 Connector를 통한 다양한 Plugin 제공 (File, AWS S3, Hive, MySQL, etc..)
+
+---

@@ -86,12 +86,14 @@
 > - curl -O http://packages.confluent.io/archive/6.1/confluent-community-6.1.0.tar.gz
 > 
 > **2. JDBC Connector 설치**
-> 1. https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc 에서 다운로드 및 압축해제
-> 2. Kafka Connect 설정에 JDBC Connector 플러그인 경로 지정 
+> - https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc 에서 다운로드 및 압축해제
+> 
+> **3. Plugin 및 드라이버 세팅**
+> 1. Kafka Connect 설정에 JDBC Connector 플러그인 경로 지정 
 >    1. $KAFKA_CONNECT_HOME\etc\kafka\connect-distributed.properties file 실행 </br>
 >    2. connect-distributed.properties 최하단의 plugin.path 수정 
 >       - plugin.path=$JDBC_CONNECTOR_HOME (confluentinc-kafka-connect-jdbc-{version} 경로) \lib
-> 3. Jdbc Source Connector에서 Mariadb를 사용하기 위한 mariadb-jdbc-client.jar 드라이버 추가
+> 2. Jdbc Source Connector에서 Mariadb를 사용하기 위한 mariadb-jdbc-client.jar 드라이버 추가
 >    - $KAFKA_CONNECT_HOME\share\java\kafka\mariadb-java-client-{version}.jar file
 >  
 

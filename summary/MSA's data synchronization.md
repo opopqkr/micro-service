@@ -81,4 +81,27 @@
   - Stream 또는 Batch 형태로 데이터 전송 가능
   - 커스텀 Connector를 통한 다양한 Plugin 제공 (File, AWS S3, Hive, MySQL, etc..)
 
+> #### Kafka Connect 설치 및 드라이버 설정 방법 (JDBC Connect, Mariadb 사용 기준)
+> **1. Kafka Connect 설치**
+> - curl -O http://packages.confluent.io/archive/6.1/confluent-community-6.1.0.tar.gz
+> 
+> **2. JDBC Connector 설치**
+> 1. https://www.confluent.io/hub/confluentinc/kafka-connect-jdbc 에서 다운로드 및 압축해제
+> 2. Kafka Connect 설정에 JDBC Connector 플러그인 경로 지정 
+>    1. $KAFKA_CONNECT_HOME\etc\kafka\connect-distributed.properties file 실행 </br>
+>    2. connect-distributed.properties 최하단의 plugin.path 수정 
+>       - plugin.path=$JDBC_CONNECTOR_HOME (confluentinc-kafka-connect-jdbc-{version} 경로) \lib
+> 3. Jdbc Source Connector에서 Mariadb를 사용하기 위한 mariadb-jdbc-client.jar 드라이버 추가
+>    - $KAFKA_CONNECT_HOME\share\java\kafka\mariadb-java-client-{version}.jar file
+>  
+
+> #### Kafka Connect 기본 실행 명령어
+> **1. Kafka Connect 실행 (Zookeeper 및 Kafka 서버가 실행되어 있어야 함)**
+> - $KAFKA_CONNECT_HOME\bin\windows\connect-distributed.bat .\etc\kafka\connect-distributed.properties
+>   - Kafka Connect 실행 시 생성되는 Topic 목록
+>     - connect-config
+>     - connect-offset
+>     - connect-status
+
+
 ---

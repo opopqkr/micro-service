@@ -104,6 +104,101 @@
 >     - connect-config
 >     - connect-offset
 >     - connect-status
-
+>
+> **2. Kafka Source Connect 추가 (Mariadb 기준)**
+> - Source Connect란? 데이터의 변경이 있을 경우, 변경에 대한 감지를 하여 Topic에 쓰기 작업을 수행
+> - http 요청 방식으로 생성
+>   - name : 생성할 Source Connect 명
+>   - connector.class : 설정할 커넥터(종류)의 클래스 
+>   - connection.url : jdbc url
+>   - connection.user : db user
+>   - connection.password : db password
+>   - mode : db insert 시, pk에 대한 처리 모드 
+>   - incrementing.column.name : pk 컬럼
+>   - table.whitelist : 변경감지 대상 테이블 (변경이 발생하면 해당 내용을 토픽에 저장)
+>   - topic.prefix : 변경에 대한 내용을 저장할 토픽의 prefix
+> - 생성 예시 </br>
+&nbsp;&nbsp;&nbsp;&nbsp; echo '{ </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name" : "my-source-connect", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "config" : { </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.url":"jdbc:mysql://localhost:3306/mydb", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.user":"root", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.password":"1q2w3e4r!", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "mode": "incrementing", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "incrementing.column.name" : "ID", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "table.whitelist":"users", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "topic.prefix" : "my_topic_", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "tasks.max" : "1" </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </br>
+&nbsp;&nbsp;&nbsp;&nbsp;} </br>
+&nbsp;&nbsp;&nbsp;&nbsp;' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
+>
+> 
+> **3. Kafka Sink Connect 추가 (Mariadb 기준)**
+> - Sink Connect란? Topic의 데이터를 애플리케이션 혹은 타겟 시스템에 저장
+> - http 요청 방식으로 생성
+>   - name : 생성할 Source Connect 명
+>   - connector.class : 설정할 커넥터(종류)의 클래스
+>   - connection.url : jdbc url
+>   - connection.user : db user
+>   - connection.password : db password
+>   - auto.create : JDBC 커넥터의 경우, 토픽의 이름과 같은 이름의 테이블을 생성하는 옵션
+>   - topics : 구독할 토픽 명
+> - 생성 예시 </br>
+&nbsp;&nbsp;&nbsp;&nbsp; echo '{ </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name" : "my-source-connect", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "config" : { </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connector.class" : "io.confluent.connect.jdbc.JdbcSourceConnector", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.url":"jdbc:mysql://localhost:3306/mydb", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.user":"root", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "connection.password":"1q2w3e4r!", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "mode": "incrementing", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "auto.create":"true", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "auto.evolve":"true", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "delete.enabled":"false", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "tasks.max" : "1" </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "topics":"my_topic_USERS" </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </br>
+&nbsp;&nbsp;&nbsp;&nbsp;} </br>
+&nbsp;&nbsp;&nbsp;&nbsp;' | curl -X POST -d @- http://localhost:8083/connectors --header "content-Type:application/json"
+>
+>
+> - Kafka Producer console을 통해서도 데이터 전달 가능 
+> - Sink Connect가 알 수 있는 JDBC Connector 타입의 포맷으로 전달 해야 함
+> - 포맷 예시 </br>
+&nbsp;&nbsp;&nbsp;&nbsp; { </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "schema": { </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "type": "struct", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "fields": [ </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { "type": "int32", "optional": false, "field": "ID" }, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { "type": "string", "optional": true, "field": "USER_ID" }, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { "type": "string", "optional": true, "field": "PASSWORD" }, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { "type": "string", "optional": true, "field": "NAME" }, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { "type": "int64", "optional": true, "name": "org.apache.kafka.connect.data.Timestamp", "version": 1, "field": "CREATED_AT" } </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ], </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "optional": false, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "USERS" </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "payload": { </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "ID": 5, </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "USER_ID": "Admin", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "PASSWORD": "admin_password", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "NAME": "Administrator", </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "CREATED_AT": 1750858743000 </br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </br>
+&nbsp;&nbsp;&nbsp;&nbsp;} </br>
+> 
+> 
+> 
+> 
+>
+> **4. Kafka Connect 확인**
+> - Connect 목록확인
+>   - curl http://localhost:8083/connectors
+> - Connect 상세 확인
+>   - curl http://localhost:8083/connectors/my-source-connect/status
+>     - my-source-connect : 확인(생성된)할 Connect 이름
+> 
 
 ---

@@ -36,4 +36,7 @@ public class CatalogEntity implements Serializable {
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
+    public void calculationQty(Integer qty) {
+        this.stock = this.stock - qty;
+    }
 }

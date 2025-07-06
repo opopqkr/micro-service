@@ -65,6 +65,9 @@ spring:
           uri: lb://CATALOG-SERVICE
           predicates:
             - Path=/catalog-service/** # default request to user service ex) http://localhost:8081/user-service/**
+          filters:
+            - RemoveRequestHeader=Cookie # 매번 새로운 요청으로 인식하기 위해서 Header Cookie 삭제
+            - RewritePath=/catalog-service/(?<segment>.*), /$\{segment}
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:

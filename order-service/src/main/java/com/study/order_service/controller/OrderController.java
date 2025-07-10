@@ -3,6 +3,7 @@ package com.study.order_service.controller;
 import com.study.order_service.dto.OrderDto;
 import com.study.order_service.entity.OrderEntity;
 import com.study.order_service.message_queue.KafkaProducer;
+import com.study.order_service.message_queue.source_connector.OrderProducer;
 import com.study.order_service.service.OrderService;
 import com.study.order_service.vo.RequestOrder;
 import com.study.order_service.vo.ResponseOrder;
@@ -29,6 +30,8 @@ public class OrderController {
 
     private final KafkaProducer kafkaProducer;
 
+    private final OrderProducer orderProducer;
+
     @GetMapping("/health_check")
     public String status() {
         return String.format("It's Working in Order Service on PORT %s",
@@ -39,13 +42,18 @@ public class OrderController {
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId, @RequestBody RequestOrder requestOrder) {
         OrderDto orderDto = mapper.map(requestOrder, OrderDto.class);
-        OrderDto createdOrder = orderService.createOrder(userId, orderDto);
 
-        ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
+        /* jpa */
+        // OrderDto createdOrder = orderService.createOrder(userId, orderDto);
+        // ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
+
+        /* Generating data via Kafka Source Connector without using jpa */
+        orderProducer.createOrder("orders", userId, orderDto);
 
         /* send this order to the kafka */
         kafkaProducer.send("example-catalog-topic", orderDto);
 
+        ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }
 

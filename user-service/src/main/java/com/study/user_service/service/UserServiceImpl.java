@@ -6,10 +6,11 @@ import com.study.user_service.dto.UserDto;
 import com.study.user_service.entity.UserEntity;
 import com.study.user_service.repository.UserRepository;
 import com.study.user_service.vo.ResponseOrder;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -40,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private final RestTemplate restTemplate;
 
     private final OrderServiceClient orderServiceClient;
+
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -77,7 +81,13 @@ public class UserServiceImpl implements UserService {
         // }
 
         /* 2. FeignException Handling using FeignErrorDecoder, which overrides openfeign's ErrorDecoder. */
-        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        // List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+
+        /* 3. Preventing fault propagation through CircuitBreaker. */
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuit-breaker");
+        List<ResponseOrder> orderList = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
+                throwable -> Collections.emptyList());
+
         userDto.setOrders(orderList);
 
         return userDto;

@@ -3,11 +3,13 @@ package com.study.order_service.message_queue.source_connector.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
 @Getter
 @Builder
+@ToString
 public class Payload implements Serializable {
 
     @JsonProperty("order_id")

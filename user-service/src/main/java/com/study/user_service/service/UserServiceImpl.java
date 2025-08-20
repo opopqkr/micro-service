@@ -84,9 +84,11 @@ public class UserServiceImpl implements UserService {
         // List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
 
         /* 3. Preventing fault propagation through CircuitBreaker. */
+        log.info("Before call orders-service.");
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuit-breaker");
         List<ResponseOrder> orderList = circuitBreaker.run(() -> orderServiceClient.getOrders(userId),
                 throwable -> Collections.emptyList());
+        log.info("After call orders-service.");
 
         userDto.setOrders(orderList);
 

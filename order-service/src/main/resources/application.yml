@@ -54,3 +54,9 @@ eureka:
 logging:
   level:
     com.study.order_service: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, httptrace, info, metrics, prometheus

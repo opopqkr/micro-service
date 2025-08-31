@@ -47,16 +47,15 @@ public class OrderController {
         OrderDto orderDto = mapper.map(requestOrder, OrderDto.class);
 
         /* jpa */
-        // OrderDto createdOrder = orderService.createOrder(userId, orderDto);
-        // ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
+        OrderDto createdOrder = orderService.createOrder(userId, orderDto);
+        ResponseOrder responseOrder = mapper.map(createdOrder, ResponseOrder.class);
 
         /* Generating data via Kafka Source Connector without using jpa */
-        orderProducer.createOrder("orders", userId, orderDto);
+        //  orderProducer.createOrder("orders", userId, orderDto);
 
         /* send this order to the kafka */
-        kafkaProducer.send("example-catalog-topic", orderDto);
-
-        ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
+        // kafkaProducer.send("example-catalog-topic", orderDto);
+        // ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
 
         log.info("After added orders data.");
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);

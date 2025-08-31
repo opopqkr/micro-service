@@ -5,6 +5,7 @@ import com.study.user_service.service.UserService;
 import com.study.user_service.vo.Greeting;
 import com.study.user_service.vo.RequestUser;
 import com.study.user_service.vo.ResponseUser;
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
@@ -29,6 +30,7 @@ public class UserController {
     private final ModelMapper mapper;
 
     @GetMapping("/health_check")
+    @Timed(value = "users.status", longTask = true) // micrometer
     public String status() {
         return String.format("It's Working in User Service"
                 + ", port(local.server.port) = " + env.getProperty("local.server.port")
@@ -38,6 +40,7 @@ public class UserController {
     }
 
     @GetMapping("/welcome")
+    @Timed(value = "users.welcome", longTask = true) // micrometer
     public String welcome() {
         // return env.getProperty("greeting.message");
         return greeting.getMessage();
